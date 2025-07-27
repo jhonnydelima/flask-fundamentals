@@ -13,7 +13,7 @@ def create_task():
   new_task = Task(id=task_id_counter, title=data['title'], description=data.get('description', ''))
   task_id_counter += 1
   tasks.append(new_task)
-  return jsonify({'message': 'Nova tarefa criada com sucesso'})
+  return jsonify({'message': 'Nova tarefa criada com sucesso'}), 201
 
 @app.route('/tasks', methods=['GET'])
 def get_tasks():
@@ -37,6 +37,14 @@ def update_task(id):
       task.title = data.get('title', task.title)
       task.description = data.get('description', task.description)
       return jsonify({'message': 'Tarefa atualizada com sucesso'})
+  return jsonify({'message': 'Tarefa não encontrada'}), 404
+
+@app.route('/tasks/<int:id>', methods=['PATCH'])
+def toggle_task_completion(id):
+  for task in tasks:
+    if task.id == id:
+      task.completed = not task.completed # toggle the completion status
+      return jsonify({'message': 'Status da tarefa atualizado com sucesso'})
   return jsonify({'message': 'Tarefa não encontrada'}), 404
 
 if __name__ == '__main__':
